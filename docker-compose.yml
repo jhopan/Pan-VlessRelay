@@ -1,0 +1,38 @@
+# Pan VlessRelay — jalankan dengan:
+#   cp .env.example .env   (lalu isi RELAY_SECRET)
+#   docker compose up -d --build
+#
+# Catatan: Docker bawaan Debian (paket `docker.io`) tidak punya plugin `compose`.
+# Kalau `docker compose` tidak ada, pakai perintah `docker run` di README.
+services:
+  vless-relay:
+    build: .
+    image: pan-vless-relay:latest
+    container_name: pan-vless-relay
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "7300:7300/tcp"
+    # Pengerasan dasar: filesystem read-only, tanpa capability tambahan, tanpa akses root.
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "const n=require('net');const s=n.connect(Number(process.env.RELAY_PORT||7300),'127.0.0.1',()=>s.write('health '+process.env.RELAY_SECRET+'\\n'));s.on('data',d=>process.exit(d.toString().trim()==='OK'?0:1));s.on('error',()=>process.exit(1));setTimeout(()=>process.exit(1),4000);"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
