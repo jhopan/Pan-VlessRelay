@@ -1,0 +1,14 @@
+# rahasia & konfigurasi lokal
+.env
+
+# Node
+node_modules/
+npm-debug.log*
+*.log
+
+# Docker lokal
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db

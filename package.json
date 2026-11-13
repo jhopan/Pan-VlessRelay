@@ -1,0 +1,15 @@
+{
+  "name": "pan-vless-relay",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Relay UDP (TCP->UDP) untuk worker VLESS CFVPN Hub: memberi jalur UDP non-DNS karena Cloudflare Workers tidak punya UDP keluar.",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node relay/udp-relay.mjs",
+    "test": "node test/selftest.mjs"
+  },
+  "license": "MIT"
+}
